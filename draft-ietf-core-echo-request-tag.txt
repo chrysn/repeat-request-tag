@@ -6,8 +6,8 @@ CoRE Working Group                                            C. Amsuess
 Internet-Draft                                                          
 Updates: 7252 (if approved)                                  J. Mattsson
 Intended status: Standards Track                             G. Selander
-Expires: 11 December 2021                                    Ericsson AB
-                                                             9 June 2021
+Expires: 19 December 2021                                    Ericsson AB
+                                                            17 June 2021
 
 
              CoAP: Echo, Request-Tag, and Token Processing
@@ -53,7 +53,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 December 2021.
+   This Internet-Draft will expire on 19 December 2021.
 
 Copyright Notice
 
@@ -118,6 +118,12 @@ Table of Contents
    use cases, additional functionality or extra processing is needed to
    support secure CoAP operations.  This document specifies security
    enhancements to the Constrained Application Protocol (CoAP).
+
+   [ Note to RFC editor: If C321 gets published before C280, then the
+   [RFC6347] references can be upgraded to draft-ietf-tls-dtls13-43
+   without the need for further changes; the reference is to 6347 here
+   because that was the stable DTLS reference when the document was last
+   touched by the authors. ]
 
    This document specifies two CoAP options, the Echo option and the
    Request-Tag option: The Echo option enables a CoAP server to verify
@@ -204,9 +210,9 @@ Table of Contents
    if the request was protected with a security protocol, such as DTLS.
    This makes CoAP requests vulnerable to certain delay attacks which
    are particularly perilous in the case of actuators
-   ([I-D.mattsson-core-coap-actuators]).  Some attacks can be mitigated
-   by establishing fresh session keys, e.g. performing a DTLS handshake
-   for each request, but in general this is not a solution suitable for
+   ([I-D.mattsson-core-coap-attacks]).  Some attacks can be mitigated by
+   establishing fresh session keys, e.g. performing a DTLS handshake for
+   each request, but in general this is not a solution suitable for
    constrained environments, for example, due to increased message
    overhead and latency.  Additionally, if there are proxies, fresh DTLS
    session keys between server and proxy does not say anything about
@@ -498,13 +504,14 @@ Table of Contents
        Section 11.3 of [RFC7252] to address, for example, the case where
        an attacker puts a victim's address in the source address of a
        CoAP request.  One way to do this is that the server responds to
-       the alleged source address of the unauthenticated request with an
-       Echo option thereby requesting the client to verify its source
-       address.  This needs to be done only once per peer and limits the
-       range of potential victims from the general Internet to endpoints
-       that have been previously in contact with the server.  For this
-       application, the Echo option can be used in messages that are not
-       integrity protected, for example during discovery.
+       the alleged source address of the request with an Echo option in
+       short response message (e.g. 4.01 Unauthorized), thereby
+       requesting the client to verify its source address.  This needs
+       to be done only once per peer and limits the range of potential
+       victims from the general Internet to endpoints that have been
+       previously in contact with the server.  For this application, the
+       Echo option can be used in messages that are not integrity
+       protected, for example during discovery.
 
        *  In the presence of a proxy, a server will not be able to
           distinguish different origin client endpoints.  Following from
@@ -520,7 +527,7 @@ Table of Contents
           amplification factor of 3 (i.e., don't send more than three
           times the number of bytes received until the peer's address is
           confirmed) is considered acceptable for unconstrained
-          applications [I-D.ietf-quic-transport].
+          applications in [RFC9000] Section 8.
 
           When that limit is applied and no further context is
           available, a safe default is sending initial responses no
@@ -574,8 +581,8 @@ Table of Contents
    different message bodies to the same resource having the same block
    number.  This remains true even when CoAP is used together with a
    security protocol such as DTLS or OSCORE, within the replay window
-   ([I-D.mattsson-core-coap-actuators]), which is a vulnerability of
-   CoAP when using RFC7959.
+   ([I-D.mattsson-core-coap-attacks]), which is a vulnerability of CoAP
+   when using RFC7959.
 
    A straightforward mitigation of mixing up blocks from different
    messages is to use unique identifiers for different message bodies,
@@ -726,7 +733,7 @@ Table of Contents
    payloads, even if the individual messages are integrity protected, it
    is still possible for an attacker to maliciously replace a later
    operation's blocks with an earlier operation's blocks (see
-   Section 2.5 of [I-D.mattsson-core-coap-actuators]).  Therefore, the
+   Section 2.5 of [I-D.mattsson-core-coap-attacks]).  Therefore, the
    integrity protection of each block does not extend to the operation's
    request body.
 
@@ -854,7 +861,7 @@ Table of Contents
 
    That approach would have been difficult to roll out reliably on DTLS
    where many implementations do not expose sequence numbers, and would
-   still not prevent attacks like in [I-D.mattsson-core-coap-actuators]
+   still not prevent attacks like in [I-D.mattsson-core-coap-attacks]
    Section 2.5.2.
 
 3.8.  Block2 / ETag Processing
@@ -884,7 +891,7 @@ Table of Contents
    ensured, a client may erroneously associate the wrong response to a
    request.  The wrong response may be an old response for the same
    resource or a response for a completely different resource (see e.g.
-   Section 2.3 of [I-D.mattsson-core-coap-actuators]).  For example, a
+   Section 2.3 of [I-D.mattsson-core-coap-attacks]).  For example, a
    request for the alarm status "GET /status" may be associated to a
    prior response "on", instead of the correct response "off".
 
@@ -1158,20 +1165,13 @@ Table of Contents
               <https://www.ietf.org/archive/id/draft-ietf-core-oscore-
               groupcomm-11.txt>.
 
-   [I-D.ietf-quic-transport]
-              Iyengar, J. and M. Thomson, "QUIC: A UDP-Based Multiplexed
-              and Secure Transport", Work in Progress, Internet-Draft,
-              draft-ietf-quic-transport-34, 14 January 2021,
-              <https://www.ietf.org/archive/id/draft-ietf-quic-
-              transport-34.txt>.
-
-   [I-D.mattsson-core-coap-actuators]
-              Mattsson, J., Fornehed, J., Selander, G., Palombini, F.,
-              and C. Amsüss, "Controlling Actuators with CoAP", Work in
-              Progress, Internet-Draft, draft-mattsson-core-coap-
-              actuators-06, 17 September 2018,
+   [I-D.mattsson-core-coap-attacks]
+              Mattsson, J. P., Fornehed, J., Selander, G., Palombini,
+              F., and C. Amsüss, "Summarizing Known Attacks on CoAP",
+              Work in Progress, Internet-Draft, draft-mattsson-core-
+              coap-attacks-00, 16 May 2021,
               <https://www.ietf.org/archive/id/draft-mattsson-core-coap-
-              actuators-06.txt>.
+              attacks-00.txt>.
 
    [REST]     Fielding, R., "Architectural Styles and the Design of
               Network-based Software Architectures", 2000,
@@ -1206,6 +1206,11 @@ Table of Contents
               Stateless Clients in the Constrained Application Protocol
               (CoAP)", RFC 8974, DOI 10.17487/RFC8974, January 2021,
               <https://www.rfc-editor.org/info/rfc8974>.
+
+   [RFC9000]  Iyengar, J., Ed. and M. Thomson, Ed., "QUIC: A UDP-Based
+              Multiplexed and Secure Transport", RFC 9000,
+              DOI 10.17487/RFC9000, May 2021,
+              <https://www.rfc-editor.org/info/rfc9000>.
 
 Appendix A.  Methods for Generating Echo Option Values
 
@@ -1323,7 +1328,20 @@ Appendix C.  Change Log
 
       -  Remove duplicate statement from Echo introduction.
 
-      -  Editorial fixes (overheads -> overhead)
+      -  Reference updates:
+
+         o  QUIC is now RFC9000; precise section given as amplification
+            reference.
+
+         o  Add note for RFC editor that RFC6347 can be upgraded to DTLS
+            1.3 if C321 overtakes C280
+
+      -  Editorial fixes
+
+         o  Rewording of a confusing sentence in amplification
+            mitigation
+
+         o  overheads -> overhead
 
    *  Changes since draft-ietf-core-echo-request-tag-11 (addressing
       GenART, TSVART, OpsDir comments)

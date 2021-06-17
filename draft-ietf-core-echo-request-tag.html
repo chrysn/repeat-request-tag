@@ -842,7 +842,7 @@ address div.right {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Amsuess, et al.</td>
-<td class="center">Expires 11 December 2021</td>
+<td class="center">Expires 19 December 2021</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -858,12 +858,12 @@ address div.right {
 <a href="https://www.rfc-editor.org/rfc/rfc7252" class="eref">7252</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2021-06-09" class="published">9 June 2021</time>
+<time datetime="2021-06-17" class="published">17 June 2021</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2021-12-11">11 December 2021</time></dd>
+<dd class="expires"><time datetime="2021-12-19">19 December 2021</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -915,7 +915,7 @@ address div.right {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 11 December 2021.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 19 December 2021.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1083,10 +1083,13 @@ address div.right {
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
 <p id="section-1-1">The initial Constrained Application Protocol (CoAP) suite of specifications (<span>[<a href="#RFC7252" class="xref">RFC7252</a>]</span>, <span>[<a href="#RFC7641" class="xref">RFC7641</a>]</span>, and <span>[<a href="#RFC7959" class="xref">RFC7959</a>]</span>) was designed with the assumption that security could be provided on a separate layer, in particular by using DTLS (<span>[<a href="#RFC6347" class="xref">RFC6347</a>]</span>). However, for some use cases, additional functionality or extra processing is needed to support secure CoAP operations. This document specifies security enhancements to the Constrained Application Protocol (CoAP).<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">This document specifies two CoAP options, the Echo option and the Request-Tag option: The Echo option enables a CoAP server to verify the freshness of a request, synchronize state, or force a client to demonstrate reachability at its claimed network address. The Request-Tag option allows the CoAP server to match message fragments belonging to the same request, fragmented using the CoAP block-wise Transfer mechanism, which mitigates attacks and enables concurrent block-wise operations. These options in themselves do not replace the need for a security protocol; they specify the format and processing of data which, when integrity protected using e.g. DTLS (<span>[<a href="#RFC6347" class="xref">RFC6347</a>]</span>), TLS (<span>[<a href="#RFC8446" class="xref">RFC8446</a>]</span>), or OSCORE (<span>[<a href="#RFC8613" class="xref">RFC8613</a>]</span>), provide the additional security features.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">This document updates <span>[<a href="#RFC7252" class="xref">RFC7252</a>]</span> with a recommendation that servers use the Echo option to mitigate amplification attacks.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">The document also updates the Token processing requirements for clients specified in <span>[<a href="#RFC7252" class="xref">RFC7252</a>]</span>. The updated processing forbids non-secure reuse of Tokens to ensure binding of responses to requests when CoAP is used with security, thus mitigating error cases and attacks where the client may erroneously associate the wrong response to a request.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">Each of the following sections provides a more detailed introduction to the topic at hand in its first subsection.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-2">[ Note to RFC editor: If C321 gets published before C280,
+then the <span>[<a href="#RFC6347" class="xref">RFC6347</a>]</span> references can be upgraded to draft-ietf-tls-dtls13-43 without the need for further changes;
+the reference is to 6347 here because that was the stable DTLS reference when the document was last touched by the authors. ]<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">This document specifies two CoAP options, the Echo option and the Request-Tag option: The Echo option enables a CoAP server to verify the freshness of a request, synchronize state, or force a client to demonstrate reachability at its claimed network address. The Request-Tag option allows the CoAP server to match message fragments belonging to the same request, fragmented using the CoAP block-wise Transfer mechanism, which mitigates attacks and enables concurrent block-wise operations. These options in themselves do not replace the need for a security protocol; they specify the format and processing of data which, when integrity protected using e.g. DTLS (<span>[<a href="#RFC6347" class="xref">RFC6347</a>]</span>), TLS (<span>[<a href="#RFC8446" class="xref">RFC8446</a>]</span>), or OSCORE (<span>[<a href="#RFC8613" class="xref">RFC8613</a>]</span>), provide the additional security features.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">This document updates <span>[<a href="#RFC7252" class="xref">RFC7252</a>]</span> with a recommendation that servers use the Echo option to mitigate amplification attacks.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">The document also updates the Token processing requirements for clients specified in <span>[<a href="#RFC7252" class="xref">RFC7252</a>]</span>. The updated processing forbids non-secure reuse of Tokens to ensure binding of responses to requests when CoAP is used with security, thus mitigating error cases and attacks where the client may erroneously associate the wrong response to a request.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">Each of the following sections provides a more detailed introduction to the topic at hand in its first subsection.<a href="#section-1-6" class="pilcrow">¶</a></p>
 <div id="terminology">
 <section id="section-1.1">
         <h3 id="name-terminology">
@@ -1120,7 +1123,7 @@ Two operations are said to be matchable if any of their messages are.<a href="#s
         <h3 id="name-request-freshness">
 <a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-request-freshness" class="section-name selfRef">Request Freshness</a>
         </h3>
-<p id="section-2.1-1">A CoAP server receiving a request is in general not able to verify when the request was sent by the CoAP client. This remains true even if the request was protected with a security protocol, such as DTLS. This makes CoAP requests vulnerable to certain delay attacks which are particularly perilous in the case of actuators (<span>[<a href="#I-D.mattsson-core-coap-actuators" class="xref">I-D.mattsson-core-coap-actuators</a>]</span>). Some attacks can be mitigated by establishing fresh session keys, e.g. performing a DTLS handshake for each request, but in general this is not a solution suitable for constrained environments, for example, due to increased message overhead and latency. Additionally, if there are proxies, fresh DTLS session keys between server and proxy does not say anything about when the client made the request. In a general hop-by-hop setting, freshness may need to be verified in each hop.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.1-1">A CoAP server receiving a request is in general not able to verify when the request was sent by the CoAP client. This remains true even if the request was protected with a security protocol, such as DTLS. This makes CoAP requests vulnerable to certain delay attacks which are particularly perilous in the case of actuators (<span>[<a href="#I-D.mattsson-core-coap-attacks" class="xref">I-D.mattsson-core-coap-attacks</a>]</span>). Some attacks can be mitigated by establishing fresh session keys, e.g. performing a DTLS handshake for each request, but in general this is not a solution suitable for constrained environments, for example, due to increased message overhead and latency. Additionally, if there are proxies, fresh DTLS session keys between server and proxy does not say anything about when the client made the request. In a general hop-by-hop setting, freshness may need to be verified in each hop.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
 <p id="section-2.1-2">A straightforward mitigation of potential delayed requests is that the CoAP server rejects a request the first time it appears and asks the CoAP client to prove that it intended to make the request at this point in time.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1279,7 +1282,7 @@ If it does so, it MUST ensure that the client's request was generated (or is re-
             </ul>
 </li>
           <li id="section-2.4-1.3">
-            <p id="section-2.4-1.3.1">A server that sends a large response to an unauthenticated peer SHOULD mitigate amplification attacks such as described in Section 11.3 of <span>[<a href="#RFC7252" class="xref">RFC7252</a>]</span> to address, for example, the case where an attacker puts a victim's address in the source address of a CoAP request. One way to do this is that the server responds to the alleged source address of the unauthenticated request with an Echo option thereby requesting the client to verify its source address. This needs to be done only once per peer and limits the range of potential victims from the general Internet to endpoints that have been previously in contact with the server. For this application, the Echo option can be used in messages that are not integrity protected, for example during discovery.<a href="#section-2.4-1.3.1" class="pilcrow">¶</a></p>
+            <p id="section-2.4-1.3.1">A server that sends a large response to an unauthenticated peer SHOULD mitigate amplification attacks such as described in Section 11.3 of <span>[<a href="#RFC7252" class="xref">RFC7252</a>]</span> to address, for example, the case where an attacker puts a victim's address in the source address of a CoAP request. One way to do this is that the server responds to the alleged source address of the request with an Echo option in short response message (e.g. 4.01 Unauthorized), thereby requesting the client to verify its source address. This needs to be done only once per peer and limits the range of potential victims from the general Internet to endpoints that have been previously in contact with the server. For this application, the Echo option can be used in messages that are not integrity protected, for example during discovery.<a href="#section-2.4-1.3.1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-2.4-1.3.2.1">In the presence of a proxy, a server will not be able to distinguish
 different origin client endpoints. Following from the recommendation above, a proxy that sends large responses to unauthenticated peers SHOULD mitigate amplification attacks. The proxy SHOULD use Echo to verify origin reachability as described in <a href="#echo-proc" class="xref">Section 2.3</a>. The proxy MAY forward idempotent requests immediately to have a cached result available when the client's Echoed request arrives.<a href="#section-2.4-1.3.2.1" class="pilcrow">¶</a>
@@ -1287,7 +1290,7 @@ different origin client endpoints. Following from the recommendation above, a pr
               <li class="normal" id="section-2.4-1.3.2.2">
                 <p id="section-2.4-1.3.2.2.1">Amplification mitigation is a trade-off between giving leverage to an attacker and causing overhead.
 An amplification factor of 3 (i.e., don't send more than three times the number of bytes received until the peer's address is confirmed)
-is considered acceptable for unconstrained applications <span>[<a href="#I-D.ietf-quic-transport" class="xref">I-D.ietf-quic-transport</a>]</span>.<a href="#section-2.4-1.3.2.2.1" class="pilcrow">¶</a></p>
+is considered acceptable for unconstrained applications in <span>[<a href="#RFC9000" class="xref">RFC9000</a>]</span> Section 8.<a href="#section-2.4-1.3.2.2.1" class="pilcrow">¶</a></p>
 <p id="section-2.4-1.3.2.2.2">
 When that limit is applied and no further context is available,
 a safe default is sending initial responses no larger than 136 Bytes in CoAP serialization.
@@ -1328,7 +1331,7 @@ never as a separate one (which would cause amplification due to retransmission).
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-fragmented-message-body-int" class="section-name selfRef">Fragmented Message Body Integrity</a>
         </h3>
 <p id="section-3.1-1">CoAP was designed to work over unreliable transports, such as UDP, and include a lightweight reliability feature to handle messages which are lost or arrive out of order. In order for a security protocol to support CoAP operations over unreliable transports, it must allow out-of-order delivery of messages using e.g. a sliding replay window such as described in Section 4.1.2.6 of DTLS (<span>[<a href="#RFC6347" class="xref">RFC6347</a>]</span>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.1-2">The block-wise transfer mechanism <span>[<a href="#RFC7959" class="xref">RFC7959</a>]</span> extends CoAP by defining the transfer of a large resource representation (CoAP message body) as a sequence of blocks (CoAP message payloads). The mechanism uses a pair of CoAP options, Block1 and Block2, pertaining to the request and response payload, respectively. The block-wise functionality does not support the detection of interchanged blocks between different message bodies to the same resource having the same block number. This remains true even when CoAP is used together with a security protocol such as DTLS or OSCORE, within the replay window (<span>[<a href="#I-D.mattsson-core-coap-actuators" class="xref">I-D.mattsson-core-coap-actuators</a>]</span>), which is a vulnerability of CoAP when using RFC7959.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">The block-wise transfer mechanism <span>[<a href="#RFC7959" class="xref">RFC7959</a>]</span> extends CoAP by defining the transfer of a large resource representation (CoAP message body) as a sequence of blocks (CoAP message payloads). The mechanism uses a pair of CoAP options, Block1 and Block2, pertaining to the request and response payload, respectively. The block-wise functionality does not support the detection of interchanged blocks between different message bodies to the same resource having the same block number. This remains true even when CoAP is used together with a security protocol such as DTLS or OSCORE, within the replay window (<span>[<a href="#I-D.mattsson-core-coap-attacks" class="xref">I-D.mattsson-core-coap-attacks</a>]</span>), which is a vulnerability of CoAP when using RFC7959.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
 <p id="section-3.1-3">A straightforward mitigation of mixing up blocks from different messages is to use unique identifiers for different message bodies, which would provide equivalent protection to the case where the complete body fits into a single payload. The ETag option <span>[<a href="#RFC7252" class="xref">RFC7252</a>]</span>, set by the CoAP server, identifies a response body fragmented using the Block2 option.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1438,7 +1441,7 @@ and MUST be ignored in those.<a href="#section-3.4-6" class="pilcrow">¶</a></p>
           <h4 id="name-body-integrity-based-on-pay">
 <a href="#section-3.5.1" class="section-number selfRef">3.5.1. </a><a href="#name-body-integrity-based-on-pay" class="section-name selfRef">Body Integrity Based on Payload Integrity</a>
           </h4>
-<p id="section-3.5.1-1">When a client fragments a request body into multiple message payloads, even if the individual messages are integrity protected, it is still possible for an attacker to maliciously replace a later operation's blocks with an earlier operation's blocks (see Section 2.5 of <span>[<a href="#I-D.mattsson-core-coap-actuators" class="xref">I-D.mattsson-core-coap-actuators</a>]</span>). Therefore, the integrity protection of each block does not extend to the operation's request body.<a href="#section-3.5.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.5.1-1">When a client fragments a request body into multiple message payloads, even if the individual messages are integrity protected, it is still possible for an attacker to maliciously replace a later operation's blocks with an earlier operation's blocks (see Section 2.5 of <span>[<a href="#I-D.mattsson-core-coap-attacks" class="xref">I-D.mattsson-core-coap-attacks</a>]</span>). Therefore, the integrity protection of each block does not extend to the operation's request body.<a href="#section-3.5.1-1" class="pilcrow">¶</a></p>
 <p id="section-3.5.1-2">In order to gain that protection, use the Request-Tag mechanism as follows:<a href="#section-3.5.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3.5.1-3.1">The individual exchanges MUST be integrity protected end-to-end between client and server.<a href="#section-3.5.1-3.1" class="pilcrow">¶</a>
@@ -1532,7 +1535,7 @@ was to update <span>[<a href="#RFC7959" class="xref">RFC7959</a>]</span> to say 
 if their fragments' order corresponded to the sequence numbers.<a href="#section-3.7-1" class="pilcrow">¶</a></p>
 <p id="section-3.7-2">That approach would have been difficult to roll out reliably on DTLS
 where many implementations do not expose sequence numbers,
-and would still not prevent attacks like in <span>[<a href="#I-D.mattsson-core-coap-actuators" class="xref">I-D.mattsson-core-coap-actuators</a>]</span> Section 2.5.2.<a href="#section-3.7-2" class="pilcrow">¶</a></p>
+and would still not prevent attacks like in <span>[<a href="#I-D.mattsson-core-coap-attacks" class="xref">I-D.mattsson-core-coap-attacks</a>]</span> Section 2.5.2.<a href="#section-3.7-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="etag">
@@ -1564,7 +1567,7 @@ and MUST NOT use the same ETag value for different representations of a resource
         <h3 id="name-request-response-binding">
 <a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-request-response-binding" class="section-name selfRef">Request-Response Binding</a>
         </h3>
-<p id="section-4.1-1">A fundamental requirement of secure REST operations is that the client can bind a response to a particular request. If this is not ensured, a client may erroneously associate the wrong response to a request. The wrong response may be an old response for the same resource or a response for a completely different resource (see e.g. Section 2.3 of <span>[<a href="#I-D.mattsson-core-coap-actuators" class="xref">I-D.mattsson-core-coap-actuators</a>]</span>). For example, a request for the alarm status "GET /status" may be associated to a prior response "on", instead of the correct response "off".<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-1">A fundamental requirement of secure REST operations is that the client can bind a response to a particular request. If this is not ensured, a client may erroneously associate the wrong response to a request. The wrong response may be an old response for the same resource or a response for a completely different resource (see e.g. Section 2.3 of <span>[<a href="#I-D.mattsson-core-coap-attacks" class="xref">I-D.mattsson-core-coap-attacks</a>]</span>). For example, a request for the alarm status "GET /status" may be associated to a prior response "on", instead of the correct response "off".<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <p id="section-4.1-2">In HTTPS, this type of binding is always assured by the ordered and reliable delivery as well as mandating that the server sends responses in the same order that the requests were received. The same is not true for CoAP where the server (or an attacker) can return responses in any order and where there can be any number of responses to a request (see e.g. <span>[<a href="#RFC7641" class="xref">RFC7641</a>]</span>). In CoAP, concurrent requests are differentiated by their Token. Note that the CoAP Message ID cannot be used for this purpose since those are typically different for REST request and corresponding response in case of "separate response", see Section 2.2 of <span>[<a href="#RFC7252" class="xref">RFC7252</a>]</span>.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
 <p id="section-4.1-3">CoAP <span>[<a href="#RFC7252" class="xref">RFC7252</a>]</span> does not treat Token as a cryptographically important value and does not give stricter guidelines than that the Tokens currently "in use" SHOULD (not SHALL) be unique. If used with a security protocol not providing bindings between requests and responses (e.g. DTLS and TLS) Token reuse may result in situations where a client matches a response to the wrong request. Note that mismatches can also happen for other reasons than a malicious attacker, e.g. delayed delivery or a server sending notifications to an uninterested client.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
 <p id="section-4.1-4">A straightforward mitigation is to mandate clients to not reuse Tokens until the traffic keys have been replaced. The following section formalizes that.<a href="#section-4.1-4" class="pilcrow">¶</a></p>
@@ -1714,13 +1717,9 @@ and as high as possible to keep room for other options that might typically occu
         <dd>
 <span class="refAuthor">Tiloca, M.</span>, <span class="refAuthor">Selander, G.</span>, <span class="refAuthor">Palombini, F.</span>, <span class="refAuthor">Mattsson, J. P.</span>, and <span class="refAuthor">J. Park</span>, <span class="refTitle">"Group OSCORE - Secure Group Communication for CoAP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-core-oscore-groupcomm-11</span>, <time datetime="2021-02-22" class="refDate">22 February 2021</time>, <span>&lt;<a href="https://www.ietf.org/archive/id/draft-ietf-core-oscore-groupcomm-11.txt">https://www.ietf.org/archive/id/draft-ietf-core-oscore-groupcomm-11.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="I-D.ietf-quic-transport">[I-D.ietf-quic-transport]</dt>
+<dt id="I-D.mattsson-core-coap-attacks">[I-D.mattsson-core-coap-attacks]</dt>
         <dd>
-<span class="refAuthor">Iyengar, J.</span> and <span class="refAuthor">M. Thomson</span>, <span class="refTitle">"QUIC: A UDP-Based Multiplexed and Secure Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-quic-transport-34</span>, <time datetime="2021-01-14" class="refDate">14 January 2021</time>, <span>&lt;<a href="https://www.ietf.org/archive/id/draft-ietf-quic-transport-34.txt">https://www.ietf.org/archive/id/draft-ietf-quic-transport-34.txt</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="I-D.mattsson-core-coap-actuators">[I-D.mattsson-core-coap-actuators]</dt>
-        <dd>
-<span class="refAuthor">Mattsson, J.</span>, <span class="refAuthor">Fornehed, J.</span>, <span class="refAuthor">Selander, G.</span>, <span class="refAuthor">Palombini, F.</span>, and <span class="refAuthor">C. Amsüss</span>, <span class="refTitle">"Controlling Actuators with CoAP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-mattsson-core-coap-actuators-06</span>, <time datetime="2018-09-17" class="refDate">17 September 2018</time>, <span>&lt;<a href="https://www.ietf.org/archive/id/draft-mattsson-core-coap-actuators-06.txt">https://www.ietf.org/archive/id/draft-mattsson-core-coap-actuators-06.txt</a>&gt;</span>. </dd>
+<span class="refAuthor">Mattsson, J. P.</span>, <span class="refAuthor">Fornehed, J.</span>, <span class="refAuthor">Selander, G.</span>, <span class="refAuthor">Palombini, F.</span>, and <span class="refAuthor">C. Amsüss</span>, <span class="refTitle">"Summarizing Known Attacks on CoAP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-mattsson-core-coap-attacks-00</span>, <time datetime="2021-05-16" class="refDate">16 May 2021</time>, <span>&lt;<a href="https://www.ietf.org/archive/id/draft-mattsson-core-coap-attacks-00.txt">https://www.ietf.org/archive/id/draft-mattsson-core-coap-attacks-00.txt</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="REST">[REST]</dt>
         <dd>
@@ -1747,8 +1746,12 @@ and as high as possible to keep room for other options that might typically occu
 <span class="refAuthor">Thomson, M.</span>, <span class="refAuthor">Nottingham, M.</span>, and <span class="refAuthor">W. Tarreau</span>, <span class="refTitle">"Using Early Data in HTTP"</span>, <span class="seriesInfo">RFC 8470</span>, <span class="seriesInfo">DOI 10.17487/RFC8470</span>, <time datetime="2018-09" class="refDate">September 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8470">https://www.rfc-editor.org/info/rfc8470</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8974">[RFC8974]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Hartke, K.</span> and <span class="refAuthor">M. Richardson</span>, <span class="refTitle">"Extended Tokens and Stateless Clients in the Constrained Application Protocol (CoAP)"</span>, <span class="seriesInfo">RFC 8974</span>, <span class="seriesInfo">DOI 10.17487/RFC8974</span>, <time datetime="2021-01" class="refDate">January 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8974">https://www.rfc-editor.org/info/rfc8974</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9000">[RFC9000]</dt>
+      <dd>
+<span class="refAuthor">Iyengar, J., Ed.</span> and <span class="refAuthor">M. Thomson, Ed.</span>, <span class="refTitle">"QUIC: A UDP-Based Multiplexed and Secure Transport"</span>, <span class="seriesInfo">RFC 9000</span>, <span class="seriesInfo">DOI 10.17487/RFC9000</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9000">https://www.rfc-editor.org/info/rfc9000</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -1816,7 +1819,23 @@ or when block-wise request operations happen rarely (in OSCORE, if there is alwa
 </li>
             <li class="normal" id="section-appendix.c-2.1.2.2">Remove duplicate statement from Echo introduction.<a href="#section-appendix.c-2.1.2.2" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-appendix.c-2.1.2.3">Editorial fixes (overheads -&gt; overhead)<a href="#section-appendix.c-2.1.2.3" class="pilcrow">¶</a>
+            <li class="normal" id="section-appendix.c-2.1.2.3">
+              <p id="section-appendix.c-2.1.2.3.1">Reference updates:<a href="#section-appendix.c-2.1.2.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-appendix.c-2.1.2.3.2.1">QUIC is now RFC9000; precise section given as amplification reference.<a href="#section-appendix.c-2.1.2.3.2.1" class="pilcrow">¶</a>
+</li>
+                <li class="normal" id="section-appendix.c-2.1.2.3.2.2">Add note for RFC editor that RFC6347 can be upgraded to DTLS 1.3 if C321 overtakes C280<a href="#section-appendix.c-2.1.2.3.2.2" class="pilcrow">¶</a>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-appendix.c-2.1.2.4">
+              <p id="section-appendix.c-2.1.2.4.1">Editorial fixes<a href="#section-appendix.c-2.1.2.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-appendix.c-2.1.2.4.2.1">Rewording of a confusing sentence in amplification mitigation<a href="#section-appendix.c-2.1.2.4.2.1" class="pilcrow">¶</a>
+</li>
+                <li class="normal" id="section-appendix.c-2.1.2.4.2.2">overheads -&gt; overhead<a href="#section-appendix.c-2.1.2.4.2.2" class="pilcrow">¶</a>
+</li>
+              </ul>
 </li>
           </ul>
 </li>
