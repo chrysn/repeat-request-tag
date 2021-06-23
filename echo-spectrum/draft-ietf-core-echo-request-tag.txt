@@ -6,8 +6,8 @@ CoRE Working Group                                            C. Amsuess
 Internet-Draft                                                          
 Updates: 7252 (if approved)                                  J. Mattsson
 Intended status: Standards Track                             G. Selander
-Expires: 19 December 2021                                    Ericsson AB
-                                                            17 June 2021
+Expires: 25 December 2021                                    Ericsson AB
+                                                            23 June 2021
 
 
              CoAP: Echo, Request-Tag, and Token Processing
@@ -53,7 +53,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 December 2021.
+   This Internet-Draft will expire on 25 December 2021.
 
 Copyright Notice
 
@@ -121,6 +121,12 @@ Table of Contents
    use cases, additional functionality or extra processing is needed to
    support secure CoAP operations.  This document specifies security
    enhancements to the Constrained Application Protocol (CoAP).
+
+   [ Note to RFC editor: If C321 gets published before C280, then the
+   [RFC6347] references can be upgraded to draft-ietf-tls-dtls13-43
+   without the need for further changes; the reference is to 6347 here
+   because that was the stable DTLS reference when the document was last
+   touched by the authors. ]
 
    This document specifies two CoAP options, the Echo option and the
    Request-Tag option: The Echo option enables a CoAP server to verify
@@ -207,9 +213,9 @@ Table of Contents
    if the request was protected with a security protocol, such as DTLS.
    This makes CoAP requests vulnerable to certain delay attacks which
    are particularly perilous in the case of actuators
-   ([I-D.mattsson-core-coap-actuators]).  Some attacks can be mitigated
-   by establishing fresh session keys, e.g. performing a DTLS handshake
-   for each request, but in general this is not a solution suitable for
+   ([I-D.mattsson-core-coap-attacks]).  Some attacks can be mitigated by
+   establishing fresh session keys, e.g. performing a DTLS handshake for
+   each request, but in general this is not a solution suitable for
    constrained environments, for example, due to increased message
    overhead and latency.  Additionally, if there are proxies, fresh DTLS
    session keys between server and proxy does not say anything about
@@ -496,17 +502,19 @@ Table of Contents
           response with the Echo option includes the Echo value in a
           subsequent unicast request to the responding server.
 
-   3.  A server that sends large responses to unauthenticated peers
+   3.  A server that sends a large response to an unauthenticated peer
        SHOULD mitigate amplification attacks such as described in
-       Section 11.3 of [RFC7252] (where an attacker would put a victim's
-       address in the source address of a CoAP request).  A new way to
-       do this is to ask a client to Echo its request to verify its
-       source address.  This needs to be done only once per peer and
-       limits the range of potential victims from the general Internet
-       to endpoints that have been previously in contact with the
-       server.  For this application, the Echo option can be used in
-       messages that are not integrity protected, for example during
-       discovery.
+       Section 11.3 of [RFC7252] to address, for example, the case where
+       an attacker puts a victim's address in the source address of a
+       CoAP request.  One way to do this is that the server responds to
+       the alleged source address of the request with an Echo option in
+       short response message (e.g. 4.01 Unauthorized), thereby
+       requesting the client to verify its source address.  This needs
+       to be done only once per peer and limits the range of potential
+       victims from the general Internet to endpoints that have been
+       previously in contact with the server.  For this application, the
+       Echo option can be used in messages that are not integrity
+       protected, for example during discovery.
 
        *  In the presence of a proxy, a server will not be able to
           distinguish different origin client endpoints.  Following from
@@ -522,7 +530,7 @@ Table of Contents
           amplification factor of 3 (i.e., don't send more than three
           times the number of bytes received until the peer's address is
           confirmed) is considered acceptable for unconstrained
-          applications [I-D.ietf-quic-transport].
+          applications in [RFC9000] Section 8.
 
           When that limit is applied and no further context is
           available, a safe default is sending initial responses no
@@ -574,18 +582,19 @@ Table of Contents
 
 2.5.2.  Source of Truth
 
-   The information about the client extracted by the server from the
-   request Echo value has different sources of truth depending on the
-   application.  Understanding this helps the server implementer decide
-   the necessary protection of the Echo value.
+   The information extracted by the server from the request Echo value
+   has different sources of truth depending on the application.
+   Understanding this helps the server implementer decide the necessary
+   protection of the Echo value.
 
    If all that the server extracts is information which the client is
    the sole source of truth for, (which is another way of saying that
-   the server has to trust the client on that one), then the server can
-   issue Echo values that do not need to be protected on their own.
-   (They still need to be covered by the security protocol that covers
-   the rest of the message, but the Echo value can be just short enough
-   to be unique between this server and client).
+   the server has to trust the client on whatever Echo is used for),
+   then the server can issue Echo values that do not need to be
+   protected on their own.  They still need to be covered by the
+   security protocol that covers the rest of the message, but the Echo
+   value can be just short enough to be unique between this server and
+   client.
 
    For example, the client's OSCORE sender sequence number (as used in
    [RFC8613] Appendix B.1.2) is such information.
@@ -607,6 +616,14 @@ Table of Contents
    trust the client to never produce requests with attacker controlled
    Echo values.  The provisions of Section 2.3 (saying that an Echo
    value may only be sent as received from the same server) allow that.
+   The requirement stated there for the client to treat the Echo value
+   as opaque holds for these application like for all others.
+
+   When the client is the sole source of truth, the server can still use
+   time or events to issue new Echo values.  Then, the request's Echo
+   value not so much proves the indicated freshness to the server, but
+   reflects the client's intention to indicate reception of responses
+   containing that value when sending the later ones.
 
    Note that a single Echo value can be used for multiple purposes (e.g.
    to get both the sequence number information and perform amplification
@@ -645,8 +662,8 @@ Table of Contents
    different message bodies to the same resource having the same block
    number.  This remains true even when CoAP is used together with a
    security protocol such as DTLS or OSCORE, within the replay window
-   ([I-D.mattsson-core-coap-actuators]), which is a vulnerability of
-   CoAP when using RFC7959.
+   ([I-D.mattsson-core-coap-attacks]), which is a vulnerability of CoAP
+   when using RFC7959.
 
    A straightforward mitigation of mixing up blocks from different
    messages is to use unique identifiers for different message bodies,
@@ -797,7 +814,7 @@ Table of Contents
    payloads, even if the individual messages are integrity protected, it
    is still possible for an attacker to maliciously replace a later
    operation's blocks with an earlier operation's blocks (see
-   Section 2.5 of [I-D.mattsson-core-coap-actuators]).  Therefore, the
+   Section 2.5 of [I-D.mattsson-core-coap-attacks]).  Therefore, the
    integrity protection of each block does not extend to the operation's
    request body.
 
@@ -925,7 +942,7 @@ Table of Contents
 
    That approach would have been difficult to roll out reliably on DTLS
    where many implementations do not expose sequence numbers, and would
-   still not prevent attacks like in [I-D.mattsson-core-coap-actuators]
+   still not prevent attacks like in [I-D.mattsson-core-coap-attacks]
    Section 2.5.2.
 
 3.8.  Block2 / ETag Processing
@@ -955,7 +972,7 @@ Table of Contents
    ensured, a client may erroneously associate the wrong response to a
    request.  The wrong response may be an old response for the same
    resource or a response for a completely different resource (see e.g.
-   Section 2.3 of [I-D.mattsson-core-coap-actuators]).  For example, a
+   Section 2.3 of [I-D.mattsson-core-coap-attacks]).  For example, a
    request for the alarm status "GET /status" may be associated to a
    prior response "on", instead of the correct response "off".
 
@@ -1045,11 +1062,14 @@ Table of Contents
    that all intermediaries are fully trusted and have not been
    compromised.
 
-   Counter Echo values can only be used to show freshness relative to
-   numbered events, and are the legitimate case for Echo values shorter
-   than four bytes, which are not necessarily secret.  They MUST NOT be
-   used unless the request Echo values are integrity protected as per
-   Section 2.3.
+   Echo values without the protection of randomness or a MAC are limited
+   to cases when the client is the trusted source of all derived
+   properties (as per Section 2.5.2).  Using them needs per-application
+   consideration of both the impact of a malicous client and of
+   implementation errors in clients.  These Echo values are the only
+   legitimate case for Echo values shorter than four bytes, which are
+   not necessarily secret.  They MUST NOT be used unless the request
+   Echo values are integrity protected as per Section 2.3.
 
    Servers SHOULD use a monotonic clock to generate timestamps and
    compute round-trip times.  Use of non-monotonic clocks is not secure
@@ -1229,20 +1249,13 @@ Table of Contents
               <https://www.ietf.org/archive/id/draft-ietf-core-oscore-
               groupcomm-11.txt>.
 
-   [I-D.ietf-quic-transport]
-              Iyengar, J. and M. Thomson, "QUIC: A UDP-Based Multiplexed
-              and Secure Transport", Work in Progress, Internet-Draft,
-              draft-ietf-quic-transport-34, 14 January 2021,
-              <https://www.ietf.org/archive/id/draft-ietf-quic-
-              transport-34.txt>.
-
-   [I-D.mattsson-core-coap-actuators]
-              Mattsson, J., Fornehed, J., Selander, G., Palombini, F.,
-              and C. Amsüss, "Controlling Actuators with CoAP", Work in
-              Progress, Internet-Draft, draft-mattsson-core-coap-
-              actuators-06, 17 September 2018,
+   [I-D.mattsson-core-coap-attacks]
+              Mattsson, J. P., Fornehed, J., Selander, G., Palombini,
+              F., and C. Amsüss, "Summarizing Known Attacks on CoAP",
+              Work in Progress, Internet-Draft, draft-mattsson-core-
+              coap-attacks-00, 16 May 2021,
               <https://www.ietf.org/archive/id/draft-mattsson-core-coap-
-              actuators-06.txt>.
+              attacks-00.txt>.
 
    [REST]     Fielding, R., "Architectural Styles and the Design of
               Network-based Software Architectures", 2000,
@@ -1278,6 +1291,11 @@ Table of Contents
               (CoAP)", RFC 8974, DOI 10.17487/RFC8974, January 2021,
               <https://www.rfc-editor.org/info/rfc8974>.
 
+   [RFC9000]  Iyengar, J., Ed. and M. Thomson, Ed., "QUIC: A UDP-Based
+              Multiplexed and Secure Transport", RFC 9000,
+              DOI 10.17487/RFC9000, May 2021,
+              <https://www.rfc-editor.org/info/rfc9000>.
+
 Appendix A.  Methods for Generating Echo Option Values
 
    The content and structure of the Echo option value are implementation
@@ -1310,6 +1328,10 @@ Appendix A.  Methods for Generating Echo Option Values
          Echo option value: random value r
          Server State: random value r, timestamp t0
 
+   This method is suitable both for time and for event base freshness
+   (e.g. by clearing the cache when an event occurs), and independent of
+   the source of truth.
+
    2.  Integrity Protected Timestamp.  The Echo option value is an
    integrity protected timestamp.  The timestamp can have different
    resolution and range.  A 32-bit timestamp can e.g. give a resolution
@@ -1329,21 +1351,28 @@ Appendix A.  Methods for Generating Echo Option Values
          Echo option value: timestamp t0, MAC(k, t0)
          Server State: secret key k
 
-   3.  Persistent Counter.  This is an event-based freshness method
-   usable for state synchronization (for example after volatile state
-   has been lost), and cannot be used for client aliveness.  It requires
-   that the client can be trusted to not spuriously produce Echo values.
-   The Echo option value is a simple counter without integrity
-   protection of its own, serialized in uint format.  The counter is
-   incremented in a persistent way every time the state that needs to be
-   synchronized is changed (in the aforementioned example: when a reboot
-   indicates that volatile state may have been lost).  An example of how
-   such a persistent counter can be implemented efficiently is the
-   OSCORE server Sender Sequence Number mechanism described in
-   Appendix B.1.1 of [RFC8613].
+   This method is suitable both for time and for event based freshness
+   (by the server remembering the time at which the event took place).
+   and independent of the source of truth.
+
+   3.  Persistent Counter.  This can be used in OSCORE for sequence
+   number recovery per Appendix B.1.2 of [RFC8613].  The Echo option
+   value is a simple counter without integrity protection of its own,
+   serialized in uint format.  The counter is incremented in a
+   persistent way every time the state that needs to be synchronized is
+   changed (in the aforementioned example: when a reboot indicates that
+   volatile state may have been lost).  An example of how such a
+   persistent counter can be implemented efficiently is the OSCORE
+   server Sender Sequence Number mechanism described in Appendix B.1.1
+   of [RFC8613].
 
          Echo option value: counter
          Server State: counter
+
+   This method is suitable only if the client is the source of truth.
+   Consequently, it cannot be used to show client aliveness.  It
+   provides statements from the client similar to event based freshness
+   (but without a proof of freshness).
 
    Other mechanisms complying with the security and privacy
    considerations may be used.  The use of encrypted timestamps in the
@@ -1396,7 +1425,20 @@ Appendix C.  Change Log
 
       -  Remove duplicate statement from Echo introduction.
 
-      -  Editorial fixes (overheads -> overhead)
+      -  Reference updates:
+
+         o  QUIC is now RFC9000; precise section given as amplification
+            reference.
+
+         o  Add note for RFC editor that RFC6347 can be upgraded to DTLS
+            1.3 if C321 overtakes C280
+
+      -  Editorial fixes
+
+         o  Rewording of a confusing sentence in amplification
+            mitigation
+
+         o  overheads -> overhead
 
    *  Changes since draft-ietf-core-echo-request-tag-11 (addressing
       GenART, TSVART, OpsDir comments)
