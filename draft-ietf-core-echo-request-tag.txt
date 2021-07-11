@@ -830,8 +830,9 @@ Table of Contents
 
       If any future security mechanisms allow a block-wise transfer to
       continue after an endpoint's details (like the IP address) have
-      changed, then the client MUST consider messages sent to _any_
-      endpoint address using the new operation's security context.
+      changed, then the client MUST consider messages matchable if they
+      were sent to _any_ endpoint address using the new operation's
+      security context.
 
    *  The client MUST NOT regard a block-wise request operation as
       concluded unless all of the messages the client previously sent in
@@ -839,11 +840,11 @@ Table of Contents
       protection mechanism, or the client can determine that the server
       would not consider the messages to be valid if they were replayed.
 
-      Typically, in OSCORE, these confirmations can result either from
-      the client receiving an OSCORE response message matching the
-      request (an empty ACK is insufficient), or because the message's
-      sequence number is old enough to be outside the server's receive
-      window.
+      When security services are provied by OSCORE, these confirmations
+      typically result either from the client receiving an OSCORE
+      response message matching the request (an empty ACK is
+      insufficient), or because the message's sequence number is old
+      enough to be outside the server's receive window.
 
       In DTLS, this can only be confirmed if the request message was not
       retransmitted, and was responded to.
@@ -1160,12 +1161,14 @@ Table of Contents
 
    Like HTTP cookies, the Echo option could potentially be abused as a
    tracking mechanism that identifies a client across requests.  This is
-   especially true for preemptive Echo values.  Servers MUST NOT use the
-   Echo option to correlate requests for other purposes than freshness
-   and reachability.  Clients only send Echo values to the same server
-   from which the values were received.  Compared to HTTP, CoAP clients
-   are often authenticated and non-mobile, and servers can therefore
-   often correlate requests based on the security context, the client
+   especially true for preemptive Echo values (i.e., Echo values sent
+   with successful responses; see [I-D.ietf-core-resource-directory]
+   Section 5.3.4 for an example).  Servers MUST NOT use the Echo option
+   to correlate requests for other purposes than freshness and
+   reachability.  Clients only send Echo values to the same server from
+   which the values were received.  Compared to HTTP, CoAP clients are
+   often authenticated and non-mobile, and servers can therefore often
+   correlate requests based on the security context, the client
    credentials, or the network address.  Especially when the Echo option
    increases a server's ability to correlate requests, clients MAY
    discard all preemptive Echo values.
@@ -1247,6 +1250,13 @@ Table of Contents
               core-oscore-groupcomm-11, 22 February 2021,
               <https://www.ietf.org/archive/id/draft-ietf-core-oscore-
               groupcomm-11.txt>.
+
+   [I-D.ietf-core-resource-directory]
+              Amsüss, C., Shelby, Z., Koster, M., Bormann, C., and P. V.
+              D. Stok, "CoRE Resource Directory", Work in Progress,
+              Internet-Draft, draft-ietf-core-resource-directory-28, 7
+              March 2021, <https://www.ietf.org/archive/id/draft-ietf-
+              core-resource-directory-28.txt>.
 
    [I-D.mattsson-core-coap-attacks]
               Mattsson, J. P., Fornehed, J., Selander, G., Palombini,
