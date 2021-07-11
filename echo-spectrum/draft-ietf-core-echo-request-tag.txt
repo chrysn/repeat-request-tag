@@ -6,8 +6,8 @@ CoRE Working Group                                            C. Amsuess
 Internet-Draft                                                          
 Updates: 7252 (if approved)                                  J. Mattsson
 Intended status: Standards Track                             G. Selander
-Expires: 25 December 2021                                    Ericsson AB
-                                                            23 June 2021
+Expires: 12 January 2022                                     Ericsson AB
+                                                            11 July 2021
 
 
              CoAP: Echo, Request-Tag, and Token Processing
@@ -53,7 +53,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 December 2021.
+   This Internet-Draft will expire on 12 January 2022.
 
 Copyright Notice
 
@@ -1029,11 +1029,10 @@ Table of Contents
    having seen the response.  If the Echo value of the response can be
    guessed, e.g. if based on a small random number or a counter (see
    Appendix A), then it is possible to compose a request with the right
-   Echo value ahead of time.  However, this may not be an issue if the
-   communication is integrity protected against third parties and the
-   client is trusted not misusing this capability.  Echo values MUST be
-   set by the CoAP server such that the risk associated with unintended
-   reuse can be managed.
+   Echo value ahead of time.  Using guessable Echo values is only
+   permissible in a narrow set of cases described in Section 2.5.2.
+   Echo values MUST be set by the CoAP server such that the risk
+   associated with unintended reuse can be managed.
 
    If uniqueness of the Echo value is based on randomness, then the
    availability of a secure pseudorandom number generator and truly
