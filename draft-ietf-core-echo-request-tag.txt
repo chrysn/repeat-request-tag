@@ -847,7 +847,8 @@ Table of Contents
       enough to be outside the server's receive window.
 
       In DTLS, this can only be confirmed if the request message was not
-      retransmitted, and was responded to.
+      retransmitted, was responded to, and the server performs replay
+      protection.
 
    Authors of other documents (e.g. applications of [RFC8613]) are
    invited to mandate this behavior for clients that execute block-wise
