@@ -177,7 +177,7 @@ Table of Contents
    time scale of the recipient.  A server that receives a request can
    either verify that the request is fresh or determine that it cannot
    be verified that the request is fresh.  What is considered a fresh
-   message is application dependent; examplary uses are "no more than
+   message is application dependent; exemplary uses are "no more than
    one hour ago" or "after this server's last reboot".
 
    The terms "payload" and "body" of a message are used as in [RFC7959].
@@ -524,7 +524,7 @@ Table of Contents
        victim's address in the source address of a CoAP request and
        sending the request to a resource with a large amplification
        factor.  The amplification factor is the ratio between the size
-       of the request and the total size of the reponse(s) to that
+       of the request and the total size of the response(s) to that
        request.  A server that provides a large amplification factor to
        an unauthenticated peer SHOULD mitigate amplification attacks as
        described in Section 11.3 of [RFC7252].  One way to mitigate such
@@ -877,7 +877,7 @@ Table of Contents
       operation would not be considered to be valid by the server if
       they were replayed.
 
-      When security services are provied by OSCORE, these confirmations
+      When security services are provided by OSCORE, these confirmations
       typically result either from the client receiving an OSCORE
       response message matching the request (an empty ACK is
       insufficient), or because the message's sequence number is old
@@ -1111,7 +1111,7 @@ Table of Contents
    Echo values without the protection of randomness or a MAC are limited
    to cases when the client is the trusted source of all derived
    properties (as per Section 2.5.2).  Using them needs per-application
-   consideration of both the impact of a malicous client and of
+   consideration of both the impact of a malicious client and of
    implementation errors in clients.  These Echo values are the only
    legitimate case for Echo values shorter than four bytes, which are
    not necessarily secret.  They MUST NOT be used unless the request
@@ -1418,7 +1418,7 @@ Appendix A.  Methods for Generating Echo Option Values
          Server State: secret key k
 
    This method is suitable both for time and for event based freshness
-   (by the server remembering the time at which the event took place).
+   (by the server remembering the time at which the event took place),
    and independent of the client authority.
 
    If this method is used to additionally obtain network reachability of
@@ -1487,28 +1487,12 @@ Appendix C.  Change Log
    [ The editor is asked to remove this section before publication. ]
 
    *  Changes since draft-ietf-core-echo-request-tag-12 (addressing
-      comments from Martin Duke)
+      comments from IESG review)
 
-      -  Add subsection "Characterization of Echo Applications". .
-
-      -  Replace "blacklist" terminology with "deny-list"
-
-      -  Remove duplicate statement from Echo introduction.
-
-      -  Reference updates:
-
-         o  QUIC is now RFC9000; precise section given as amplification
-            reference.
-
-         o  Add note for RFC editor that RFC6347 can be upgraded to DTLS
-            1.3 if C321 overtakes C280
-
-      -  Editorial fixes
-
-         o  Rewording of a confusing sentence in amplification
-            mitigation
-
-         o  overheads -> overhead
+      See CoRE point-to-point responses at https://github.com/core-wg/
+      echo-request-tag/blob/master/point-to-point.md
+      (https://github.com/core-wg/echo-request-tag/blob/master/point-to-
+      point.md) and on CoRE mailing list.
 
    *  Changes since draft-ietf-core-echo-request-tag-11 (addressing
       GenART, TSVART, OpsDir comments)
