@@ -6,8 +6,8 @@ CoRE Working Group                                            C. Amsuess
 Internet-Draft                                                          
 Updates: 7252 (if approved)                                  J. Mattsson
 Intended status: Standards Track                             G. Selander
-Expires: 12 January 2022                                     Ericsson AB
-                                                            11 July 2021
+Expires: 13 January 2022                                     Ericsson AB
+                                                            12 July 2021
 
 
              CoAP: Echo, Request-Tag, and Token Processing
@@ -53,7 +53,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 January 2022.
+   This Internet-Draft will expire on 13 January 2022.
 
 Copyright Notice
 
@@ -846,16 +846,17 @@ Table of Contents
       insufficient), or because the message's sequence number is old
       enough to be outside the server's receive window.
 
-      In DTLS, this can only be confirmed if the request message was not
-      retransmitted, was responded to, and the server performs replay
+      When security services are provided by DTLS, this can only be
+      confirmed if there was no CoAP retransmission of the request, the
+      request was responded to, and the server performs replay
       protection.
 
    Authors of other documents (e.g. applications of [RFC8613]) are
-   invited to mandate this behavior for clients that execute block-wise
-   interactions over secured transports.  In this way, the server can
-   rely on a conforming client to set the Request-Tag option when
-   required, and thereby conclude on the integrity of the assembled
-   body.
+   invited to mandate this subsection's behavior for clients that
+   execute block-wise interactions over secured transports.  In this
+   way, the server can rely on a conforming client to set the Request-
+   Tag option when required, and thereby have confidence the integrity
+   of the assembled body.
 
    Note that this mechanism is implicitly implemented when the security
    layer guarantees ordered delivery (e.g.  CoAP over TLS [RFC8323]).
