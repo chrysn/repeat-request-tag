@@ -81,7 +81,8 @@ Table of Contents
      2.4.  Applications of the Echo Option
      2.5.  Characterization of Echo Applications
        2.5.1.  Time versus Event Based Freshness
-       2.5.2.  Source of Truth
+       2.5.2.  Authority over synchronized property
+       2.5.3.  Protection by a Security Protocol
      2.6.  Updated Amplification Mitigation Requirements for Servers
    3.  Protecting Message Bodies using Request Tags
      3.1.  Fragmented Message Body Integrity
@@ -353,7 +354,7 @@ Table of Contents
    than a certain threshold T.  The server can verify this by checking
    that (t1 - t0) < T, where t1 is the request receive time and t0 is
    the time when the Echo option value was generated.  An example
-   message flow is shown in Figure 2.
+   message flow over DTLS is shown Figure 2.
 
     Client   Server
        |       |
@@ -392,7 +393,7 @@ Table of Contents
    verifies freshness by checking that e0 equals e1, where e0 is the
    cached value when the Echo option value was generated, and e1 is the
    cached value at the reception of the request.  An example message
-   flow is shown in Figure 3.
+   flow over DTLS is shown in Figure 3.
 
      Client   Server
         |       |
@@ -467,6 +468,9 @@ Table of Contents
 
 2.4.  Applications of the Echo Option
 
+   Unless otherwise noted, all these applications require a security
+   protocol to be used, and the Echo option to be protected by it.
+
    1.  Actuation requests often require freshness guarantees to avoid
        accidental or malicious delayed actuator actions.  In general,
        all non-safe methods (e.g.  POST, PUT, DELETE) may require
@@ -520,7 +524,8 @@ Table of Contents
        potential victims from the general Internet to endpoints that
        have been previously in contact with the server.  For this
        application, the Echo option can be used in messages that are not
-       integrity protected, for example during discovery.
+       integrity protected, for example during discovery.  (This is
+       formally recommended in Section 2.6).
 
        *  In the presence of a proxy, a server will not be able to
           distinguish different origin client endpoints.  Following from
@@ -586,21 +591,21 @@ Table of Contents
    every event to obtain "usable once but only for 5 minutes"-style
    semantics.
 
-2.5.2.  Source of Truth
+2.5.2.  Authority over synchronized property
 
    The information extracted by the server from the request Echo value
    has different sources of truth depending on the application.
-   Understanding this helps the server implementer decide the necessary
+   Understanding who or what is the authoritative source of that
+   information helps the server implementer decide the necessary
    protection of the Echo value.
 
    If all that the server extracts is information which the client is
-   the sole source of truth for, (which is another way of saying that
-   the server has to trust the client on whatever Echo is used for),
-   then the server can issue Echo values that do not need to be
-   protected on their own.  They still need to be covered by the
-   security protocol that covers the rest of the message, but the Echo
-   value can be just short enough to be unique between this server and
-   client.
+   the sole authority for, (which is another way of saying that the
+   server has to trust the client on whatever Echo is used for), then
+   the server can issue Echo values that do not need to be protected on
+   their own.  They still need to be covered by the security protocol
+   that covers the rest of the message, but the Echo value can be just
+   short enough to be unique between this server and client.
 
    For example, the client's OSCORE sender sequence number (as used in
    [RFC8613] Appendix B.1.2) is such information.
@@ -614,7 +619,7 @@ Table of Contents
    large random value or a MAC as described in Appendix A items 1 and 2.
 
    For some applications, the server may be able to trust the client to
-   also serve as a source of truth (e.g. when using time based freshness
+   also act as the authority (e.g. when using time based freshness
    purely to mitigate request delay attacks); these need careful case-
    by-case evaluation.
 
@@ -625,15 +630,32 @@ Table of Contents
    The requirement stated there for the client to treat the Echo value
    as opaque holds for these application like for all others.
 
-   When the client is the sole source of truth, the server can still use
-   time or events to issue new Echo values.  Then, the request's Echo
-   value not so much proves the indicated freshness to the server, but
-   reflects the client's intention to indicate reception of responses
-   containing that value when sending the later ones.
+   When the client is the sole authority over the synchronized property,
+   the server can still use time or events to issue new Echo values.
+   Then, the request's Echo value not so much proves the indicated
+   freshness to the server, but reflects the client's intention to
+   indicate reception of responses containing that value when sending
+   the later ones.
 
    Note that a single Echo value can be used for multiple purposes (e.g.
    to get both the sequence number information and perform amplification
    mitigation); then, the stricter requirements apply.
+
+2.5.3.  Protection by a Security Protocol
+
+   Using Echo almost needs to be used in combination with a security
+   protocol for meaningful results in almost all applications.
+
+   When the information extracted by the server is only about a part of
+   the system outside of any security protocol, the Echo option can also
+   be used without a security protocol (in case of OSCORE, as an outer
+   option).
+
+   The only known application satisfying this requirement is network
+   address reachability, where it is used both by servers (e.g. during
+   setup of a security context) and proxies (which do not necessarily
+   have a security association with their clients) for amplification
+   mitigation.
 
 2.6.  Updated Amplification Mitigation Requirements for Servers
 
@@ -1357,7 +1379,7 @@ Appendix A.  Methods for Generating Echo Option Values
 
    This method is suitable both for time and for event base freshness
    (e.g. by clearing the cache when an event occurs), and independent of
-   the source of truth.
+   the client authority.
 
    2.  Integrity Protected Timestamp.  The Echo option value is an
    integrity protected timestamp.  The timestamp can have different
@@ -1380,7 +1402,7 @@ Appendix A.  Methods for Generating Echo Option Values
 
    This method is suitable both for time and for event based freshness
    (by the server remembering the time at which the event took place).
-   and independent of the source of truth.
+   and independent of the client authority.
 
    3.  Persistent Counter.  This can be used in OSCORE for sequence
    number recovery per Appendix B.1.2 of [RFC8613].  The Echo option
@@ -1396,10 +1418,10 @@ Appendix A.  Methods for Generating Echo Option Values
          Echo option value: counter
          Server State: counter
 
-   This method is suitable only if the client is the source of truth.
-   Consequently, it cannot be used to show client aliveness.  It
-   provides statements from the client similar to event based freshness
-   (but without a proof of freshness).
+   This method is suitable only if the client is the authority over the
+   synchronized property.  Consequently, it cannot be used to show
+   client aliveness.  It provides statements from the client similar to
+   event based freshness (but without a proof of freshness).
 
    Other mechanisms complying with the security and privacy
    considerations may be used.  The use of encrypted timestamps in the
