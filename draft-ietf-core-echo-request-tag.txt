@@ -81,7 +81,7 @@ Table of Contents
      2.4.  Applications of the Echo Option
      2.5.  Characterization of Echo Applications
        2.5.1.  Time versus Event Based Freshness
-       2.5.2.  Authority over used information
+       2.5.2.  Authority over Used Information
        2.5.3.  Protection by a Security Protocol
      2.6.  Updated Amplification Mitigation Requirements for Servers
    3.  Protecting Message Bodies using Request Tags
@@ -135,7 +135,7 @@ Table of Contents
    or to force a client to demonstrate reachability at its claimed
    network address.  The Request-Tag option allows the CoAP server to
    match message fragments belonging to the same request, fragmented
-   using the CoAP block-wise Transfer mechanism, which mitigates attacks
+   using the CoAP block-wise transfer mechanism, which mitigates attacks
    and enables concurrent block-wise operations.  These options in
    themselves do not replace the need for a security protocol; they
    specify the format and processing of data which, when integrity
@@ -602,7 +602,7 @@ Table of Contents
    every event to obtain "usable once but only for 5 minutes"-style
    semantics.
 
-2.5.2.  Authority over used information
+2.5.2.  Authority over Used Information
 
    The information extracted by the server from the request Echo value
    has different sources of truth depending on the application.
@@ -659,15 +659,15 @@ Table of Contents
    combination with a security protocol in almost all applications.
 
    When the information extracted by the server is only about a part of
-   the system outside of any security protocol, the Echo option can also
-   be used without a security protocol (in case of OSCORE, as an outer
-   option).
+   the system outside of any security protocol, then the Echo option can
+   also be used without a security protocol (in case of OSCORE, as an
+   outer option).
 
    The only known application satisfying this requirement is network
-   address reachability, where it is used both by servers (e.g. during
-   setup of a security context) and proxies (which do not necessarily
-   have a security association with their clients) for amplification
-   mitigation.
+   address reachability, where unprotected Echo values are used both by
+   servers (e.g. during setup of a security context) and proxies (which
+   do not necessarily have a security association with their clients)
+   for amplification mitigation.
 
 2.6.  Updated Amplification Mitigation Requirements for Servers
 
@@ -686,7 +686,7 @@ Table of Contents
 3.1.  Fragmented Message Body Integrity
 
    CoAP was designed to work over unreliable transports, such as UDP,
-   and include a lightweight reliability feature to handle messages
+   and includes a lightweight reliability feature to handle messages
    which are lost or arrive out of order.  In order for a security
    protocol to support CoAP operations over unreliable transports, it
    must allow out-of-order delivery of messages.
@@ -874,8 +874,8 @@ Table of Contents
 
    *  The client MUST NOT regard a block-wise request operation as
       concluded unless all of the messages the client has sent in the
-      operation would not be considered to be valid by the server if
-      they were replayed.
+      operation would be regarded as invalid by the server if they were
+      replayed.
 
       When security services are provided by OSCORE, these confirmations
       typically result either from the client receiving an OSCORE
@@ -910,11 +910,11 @@ Table of Contents
    and thus the Request-Tag.
 
    Body integrity is largely independent from replay protection: When no
-   replay protection is available (which is optional in DTLS), a full
-   block-wise exchange may be replayed, but by adhering to the above, no
-   blocks will be mixed up.  The only link between body integrity and
-   replay protection is that without replay protection, recycling is not
-   possible.
+   replay protection is available (it is optional in DTLS), a full
+   block-wise operation may be replayed, but by adhering to the above,
+   no operations will be mixed up.  The only link between body integrity
+   and replay protection is that without replay protection, recycling is
+   not possible.
 
 3.5.2.  Multiple Concurrent Block-wise Operations
 
@@ -1223,7 +1223,7 @@ Table of Contents
    [I-D.irtf-pearg-numeric-ids-generation].  To avoid effects described
    there, the absent Request-Tag option should be recycled as much as
    possible.  (That is generally possible as long as a security
-   mechanism is in place -- even in the case of OSCORE outer block-wise
+   mechanism is in place - even in the case of OSCORE outer block-wise
    transfers, as the OSCORE option's variation ensures that no matchable
    requests are created by different clients).  When an unprotected Echo
    option is used to demonstrate reachability, the recommended mechanism
@@ -1430,11 +1430,10 @@ Appendix A.  Methods for Generating Echo Option Values
    value is a simple counter without integrity protection of its own,
    serialized in uint format.  The counter is incremented in a
    persistent way every time the state that needs to be synchronized is
-   changed (in the aforementioned example: when a reboot indicates that
-   volatile state may have been lost).  An example of how such a
-   persistent counter can be implemented efficiently is the OSCORE
-   server Sender Sequence Number mechanism described in Appendix B.1.1
-   of [RFC8613].
+   changed (in the B.1.2 case: when a reboot indicates that volatile
+   state may have been lost).  An example of how such a persistent
+   counter can be implemented efficiently is the OSCORE server Sender
+   Sequence Number mechanism described in Appendix B.1.1 of [RFC8613].
 
          Echo option value: counter
          Server State: counter
@@ -1449,8 +1448,7 @@ Appendix A.  Methods for Generating Echo Option Values
    Echo option increases security, but typically requires an IV
    (Initialization Vector) to be included in the Echo option value,
    which adds overhead and makes the specification of such a mechanism
-   slightly more complicated than the two time-based mechanisms
-   specified here.
+   slightly more complicated than what is described here.
 
 Appendix B.  Request-Tag Message Size Impact
 
