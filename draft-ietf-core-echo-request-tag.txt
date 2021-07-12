@@ -388,11 +388,11 @@ Table of Contents
    the application.  In the following we assume the cache size is 1, in
    which case freshness is defined as no new event has taken place.  At
    each event a new value is written into the cache.  The cache values
-   MUST be different for all practical purposes.  The server verifies
-   freshness by checking that e0 equals e1, where e0 is the cached value
-   when the Echo option value was generated, and e1 is the cached value
-   at the reception of the request.  An example message flow is shown in
-   Figure 3.
+   MUST be different except with negligible probability.  The server
+   verifies freshness by checking that e0 equals e1, where e0 is the
+   cached value when the Echo option value was generated, and e1 is the
+   cached value at the reception of the request.  An example message
+   flow is shown in Figure 3.
 
      Client   Server
         |       |
@@ -451,12 +451,12 @@ Table of Contents
    scope for this document.  The CoAP client side of HTTP-to-CoAP
    proxies SHOULD respond to Echo challenges themselves if they know
    from the recent establishing of the connection that the HTTP request
-   is fresh.  Otherwise, they SHOULD respond with 503 Service
-   Unavailable, Retry-After: 0 and terminate any underlying Keep-Alive
-   connection.  If the HTTP request arrived in Early Data, the proxy
-   SHOULD use a 425 Too Early response instead (see [RFC8470]).  They
-   MAY also use other mechanisms to establish freshness of the HTTP
-   request that are not specified here.
+   is fresh.  Otherwise, they MUST NOT repeat an unsafe request and
+   SHOULD respond with 503 Service Unavailable, Retry-After: 0 and
+   terminate any underlying Keep-Alive connection.  If the HTTP request
+   arrived in Early Data, the proxy SHOULD use a 425 Too Early response
+   instead (see [RFC8470]).  They MAY also use other mechanisms to
+   establish freshness of the HTTP request that are not specified here.
 
 2.4.  Applications of the Echo Option
 
@@ -466,9 +466,9 @@ Table of Contents
        freshness guarantees for secure operation.
 
        *  The same Echo value may be used for multiple actuation
-          requests to the same server, as long as the total round-trip
-          time since the Echo option value was generated is below the
-          freshness threshold.
+          requests to the same server, as long as the total time since
+          the Echo option value was generated is below the freshness
+          threshold.
 
        *  For actuator applications with low delay tolerance, to avoid
           additional round-trips for multiple requests in rapid
@@ -484,23 +484,23 @@ Table of Contents
        synchronize a property with a client which is not the authority
        of the property being synchronized.  E.g. if access to a server
        resource is dependent on time, then server MUST NOT synchronize
-       time with a client requesting access unless it is time authority
-       for the server.
+       time with a client requesting access unless the client is time
+       authority for the server.
 
        *  If a server reboots during operation it may need to
           synchronize state or time before continuing the interaction.
           For example, with OSCORE it is possible to reuse a partly
           persistently stored security context by synchronizing the
-          Partial IV (sequence number) using the Echo option, see
-          Section 7.5 of [RFC8613].
+          Partial IV (sequence number) using the Echo option as
+          specified in Section 7.5 of [RFC8613].
 
        *  A device joining a CoAP group communication [RFC7390]
           protected with OSCORE [I-D.ietf-core-oscore-groupcomm] may be
-          required to initially verify freshness and synchronize state
-          or time with a client by using the Echo option in a unicast
-          response to a multicast request.  The client receiving the
-          response with the Echo option includes the Echo value in a
-          subsequent unicast request to the responding server.
+          required to initially synchronize its replay window state with
+          a client by using the Echo option in a unicast response to a
+          multicast request.  The client receiving the response with the
+          Echo option includes the Echo value in a subsequent unicast
+          request to the responding server.
 
    3.  A server that sends a large response to an unauthenticated peer
        SHOULD mitigate amplification attacks such as described in
@@ -510,11 +510,11 @@ Table of Contents
        the alleged source address of the request with an Echo option in
        short response message (e.g. 4.01 Unauthorized), thereby
        requesting the client to verify its source address.  This needs
-       to be done only once per peer and limits the range of potential
-       victims from the general Internet to endpoints that have been
-       previously in contact with the server.  For this application, the
-       Echo option can be used in messages that are not integrity
-       protected, for example during discovery.
+       to be done only once per endpoint and limits the range of
+       potential victims from the general Internet to endpoints that
+       have been previously in contact with the server.  For this
+       application, the Echo option can be used in messages that are not
+       integrity protected, for example during discovery.
 
        *  In the presence of a proxy, a server will not be able to
           distinguish different origin client endpoints.  Following from
@@ -523,7 +523,7 @@ Table of Contents
           attacks.  The proxy SHOULD use Echo to verify origin
           reachability as described in Section 2.3.  The proxy MAY
           forward idempotent requests immediately to have a cached
-          result available when the client's Echoed request arrives.
+          result available when the client's repeated request arrives.
 
        *  Amplification mitigation is a trade-off between giving
           leverage to an attacker and causing overhead.  An
@@ -979,8 +979,8 @@ Table of Contents
    request for the alarm status "GET /status" may be associated to a
    prior response "on", instead of the correct response "off".
 
-   In HTTPS, this type of binding is always assured by the ordered and
-   reliable delivery as well as mandating that the server sends
+   In HTTP/1.1, this type of binding is always assured by the ordered
+   and reliable delivery as well as mandating that the server sends
    responses in the same order that the requests were received.  The
    same is not true for CoAP where the server (or an attacker) can
    return responses in any order and where there can be any number of
