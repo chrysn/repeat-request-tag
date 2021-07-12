@@ -81,7 +81,7 @@ Table of Contents
      2.4.  Applications of the Echo Option
      2.5.  Characterization of Echo Applications
        2.5.1.  Time versus Event Based Freshness
-       2.5.2.  Authority over synchronized property
+       2.5.2.  Authority over used information
        2.5.3.  Protection by a Security Protocol
      2.6.  Updated Amplification Mitigation Requirements for Servers
    3.  Protecting Message Bodies using Request Tags
@@ -131,16 +131,16 @@ Table of Contents
 
    This document specifies two CoAP options, the Echo option and the
    Request-Tag option: The Echo option enables a CoAP server to verify
-   the freshness of a request, synchronize state, or force a client to
-   demonstrate reachability at its claimed network address.  The
-   Request-Tag option allows the CoAP server to match message fragments
-   belonging to the same request, fragmented using the CoAP block-wise
-   Transfer mechanism, which mitigates attacks and enables concurrent
-   block-wise operations.  These options in themselves do not replace
-   the need for a security protocol; they specify the format and
-   processing of data which, when integrity protected using e.g.  DTLS
-   ([RFC6347]), TLS ([RFC8446]), or OSCORE ([RFC8613]), provide the
-   additional security features.
+   the freshness of a request, which can be used to synchronize state,
+   or to force a client to demonstrate reachability at its claimed
+   network address.  The Request-Tag option allows the CoAP server to
+   match message fragments belonging to the same request, fragmented
+   using the CoAP block-wise Transfer mechanism, which mitigates attacks
+   and enables concurrent block-wise operations.  These options in
+   themselves do not replace the need for a security protocol; they
+   specify the format and processing of data which, when integrity
+   protected using e.g.  DTLS ([RFC6347]), TLS ([RFC8446]), or OSCORE
+   ([RFC8613]), provide the additional security features.
 
    This document updates [RFC7252] with a recommendation that servers
    use the Echo option to mitigate amplification attacks.
@@ -331,7 +331,8 @@ Table of Contents
    any other response with the Echo option, the client SHOULD echo the
    Echo option value in the next request to the server.  The client MAY
    include the same Echo option value in several different requests to
-   the server.
+   the server, or discard it at any time (especially to avoid tracking,
+   see Section 6).
 
    A client MUST only send Echo values to endpoints it received them
    from (where as defined in [RFC7252] Section 1.2, the security
@@ -432,7 +433,9 @@ Table of Contents
    protected between the intended endpoints, e.g. using DTLS, TLS, or an
    OSCORE Inner option ([RFC8613]).  When used to demonstrate
    reachability at a claimed network address, the Echo option SHOULD be
-   a MAC of the claimed address, but MAY be unprotected.
+   a MAC of the claimed address, but MAY be unprotected.  Combining
+   different Echo applications can necessitate different choices, see
+   Appendix A item 2 for an example.
 
    An Echo option MAY be sent with a successful response, i.e., even
    though the request satisfied any freshness requirements on the
@@ -457,14 +460,14 @@ Table of Contents
    especially if they have reason to assume that access may require it
    (e.g. because it is a PUT or POST); how this is determined is out of
    scope for this document.  The CoAP client side of HTTP-to-CoAP
-   proxies SHOULD respond to Echo challenges themselves if they know
+   proxies MUST respond to Echo challenges itself if the proxy knows
    from the recent establishing of the connection that the HTTP request
-   is fresh.  Otherwise, they MUST NOT repeat an unsafe request and
-   SHOULD respond with 503 Service Unavailable, Retry-After: 0 and
-   terminate any underlying Keep-Alive connection.  If the HTTP request
-   arrived in Early Data, the proxy SHOULD use a 425 Too Early response
-   instead (see [RFC8470]).  They MAY also use other mechanisms to
-   establish freshness of the HTTP request that are not specified here.
+   is fresh.  Otherwise, it MUST NOT repeat an unsafe request and SHOULD
+   respond with 503 Service Unavailable, Retry-After: 0 and terminate
+   any underlying Keep-Alive connection.  If the HTTP request arrived in
+   Early Data, the proxy SHOULD use a 425 Too Early response instead
+   (see [RFC8470]).  They MAY also use other mechanisms to establish
+   freshness of the HTTP request that are not specified here.
 
 2.4.  Applications of the Echo Option
 
@@ -496,6 +499,12 @@ Table of Contents
        resource is dependent on time, then server MUST NOT synchronize
        time with a client requesting access unless the client is time
        authority for the server.
+
+       Note that the state to be synchronized is not carried inside the
+       Echo option.  Any explicit state information needs to be carried
+       along in the messages the Echo value is sent in; the Echo
+       mechanism only provides a partial order on the messages'
+       processing.
 
        *  If a server reboots during operation it may need to
           synchronize state or time before continuing the interaction.
@@ -533,8 +542,8 @@ Table of Contents
           to unauthenticated peers SHOULD mitigate amplification
           attacks.  The proxy SHOULD use Echo to verify origin
           reachability as described in Section 2.3.  The proxy MAY
-          forward idempotent requests immediately to have a cached
-          result available when the client's repeated request arrives.
+          forward safe requests immediately to have a cached result
+          available when the client's repeated request arrives.
 
        *  Amplification mitigation is a trade-off between giving
           leverage to an attacker and causing overhead.  An
@@ -591,7 +600,7 @@ Table of Contents
    every event to obtain "usable once but only for 5 minutes"-style
    semantics.
 
-2.5.2.  Authority over synchronized property
+2.5.2.  Authority over used information
 
    The information extracted by the server from the request Echo value
    has different sources of truth depending on the application.
@@ -600,12 +609,13 @@ Table of Contents
    protection of the Echo value.
 
    If all that the server extracts is information which the client is
-   the sole authority for, (which is another way of saying that the
-   server has to trust the client on whatever Echo is used for), then
-   the server can issue Echo values that do not need to be protected on
-   their own.  They still need to be covered by the security protocol
-   that covers the rest of the message, but the Echo value can be just
-   short enough to be unique between this server and client.
+   authorized to provide arbitrarily, (which is another way of saying
+   that the server has to trust the client on whatever Echo is used
+   for), then the server can issue Echo values that do not need to be
+   protected on their own.  They still need to be covered by the
+   security protocol that covers the rest of the message, but the Echo
+   value can be just short enough to be unique between this server and
+   client.
 
    For example, the client's OSCORE sender sequence number (as used in
    [RFC8613] Appendix B.1.2) is such information.
@@ -677,9 +687,7 @@ Table of Contents
    and include a lightweight reliability feature to handle messages
    which are lost or arrive out of order.  In order for a security
    protocol to support CoAP operations over unreliable transports, it
-   must allow out-of-order delivery of messages using e.g. a sliding
-   replay window such as described in Section 4.1.2.6 of DTLS
-   ([RFC6347]).
+   must allow out-of-order delivery of messages.
 
    The block-wise transfer mechanism [RFC7959] extends CoAP by defining
    the transfer of a large resource representation (CoAP message body)
@@ -863,10 +871,9 @@ Table of Contents
       security context.
 
    *  The client MUST NOT regard a block-wise request operation as
-      concluded unless all of the messages the client previously sent in
-      the operation have been confirmed by the message integrity
-      protection mechanism, or the client can determine that the server
-      would not consider the messages to be valid if they were replayed.
+      concluded unless all of the messages the client has sent in the
+      operation would not be considered to be valid by the server if
+      they were replayed.
 
       When security services are provied by OSCORE, these confirmations
       typically result either from the client receiving an OSCORE
@@ -899,6 +906,13 @@ Table of Contents
    is created first, then written to once and available when written
    completely), clients need not concern themselves with body integrity
    and thus the Request-Tag.
+
+   Body integrity is largely independent from replay protection: When no
+   replay protection is available (which is optional in DTLS), a full
+   block-wise exchange may be replayed, but by adhering to the above, no
+   blocks will be mixed up.  The only link between body integrity and
+   replay protection is that without replay protection, recycling is not
+   possible.
 
 3.5.2.  Multiple Concurrent Block-wise Operations
 
@@ -1291,9 +1305,9 @@ Table of Contents
               Tiloca, M., Selander, G., Palombini, F., Mattsson, J. P.,
               and J. Park, "Group OSCORE - Secure Group Communication
               for CoAP", Work in Progress, Internet-Draft, draft-ietf-
-              core-oscore-groupcomm-11, 22 February 2021,
+              core-oscore-groupcomm-12, 12 July 2021,
               <https://www.ietf.org/archive/id/draft-ietf-core-oscore-
-              groupcomm-11.txt>.
+              groupcomm-12.txt>.
 
    [I-D.irtf-pearg-numeric-ids-generation]
               Gont, F. and I. Arce, "On the Generation of Transient
@@ -1404,6 +1418,10 @@ Appendix A.  Methods for Generating Echo Option Values
    (by the server remembering the time at which the event took place).
    and independent of the client authority.
 
+   If this method is used to additionally obtain network reachability of
+   the client, the server MUST use the client's network address too,
+   e.g. as in "MAC(k, t0, apparent network address)".
+
    3.  Persistent Counter.  This can be used in OSCORE for sequence
    number recovery per Appendix B.1.2 of [RFC8613].  The Echo option
    value is a simple counter without integrity protection of its own,
@@ -1436,10 +1454,10 @@ Appendix B.  Request-Tag Message Size Impact
    In absence of concurrent operations, the Request-Tag mechanism for
    body integrity (Section 3.5.1) incurs no overhead if no messages are
    lost (more precisely: in OSCORE, if no operations are aborted due to
-   repeated transmission failure; in DTLS, if no packets are lost), or
-   when block-wise request operations happen rarely (in OSCORE, if there
-   is always only one request block-wise operation in the replay
-   window).
+   repeated transmission failure; in DTLS, if no packets are lost and
+   replay protection is active), or when block-wise request operations
+   happen rarely (in OSCORE, if there is always only one request block-
+   wise operation in the replay window).
 
    In those situations, no message has any Request-Tag option set, and
    that can be recycled indefinitely.
