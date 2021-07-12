@@ -1026,13 +1026,13 @@ Table of Contents
 5.  Security Considerations
 
    The freshness assertion of the Echo option comes from the client
-   reproducing the same value of the Echo option in a request as in a
-   previous response.  If the Echo value is a large random number then
-   there is a high probability that the request is generated after
-   having seen the response.  If the Echo value of the response can be
-   guessed, e.g. if based on a small random number or a counter (see
-   Appendix A), then it is possible to compose a request with the right
-   Echo value ahead of time.  Using guessable Echo values is only
+   reproducing the same value of the Echo option in a request as it
+   received in a previous response.  If the Echo value is a large random
+   number then there is a high probability that the request is generated
+   after having seen the response.  If the Echo value of the response
+   can be guessed, e.g. if based on a small random number or a counter
+   (see Appendix A), then it is possible to compose a request with the
+   right Echo value ahead of time.  Using guessable Echo values is only
    permissible in a narrow set of cases described in Section 2.5.2.
    Echo values MUST be set by the CoAP server such that the risk
    associated with unintended reuse can be managed.
@@ -1045,7 +1045,7 @@ Table of Contents
    number must only be used once, an implementation needs to get a new
    truly random seed after reboot, or continuously store state in
    nonvolatile memory.  See ([RFC8613], Appendix B.1.1) for issues and
-   solution approaches for writing to nonvolatile memory.
+   approaches for writing to nonvolatile memory.
 
    A single active Echo value with 64 (pseudo-)random bits gives the
    same theoretical security level as a 64-bit MAC (as used in e.g.
@@ -1087,11 +1087,12 @@ Table of Contents
    signals to radio-controlled clocks.
 
    For the purpose of generating timestamps for Echo a server MAY set a
-   timer at reboot and use the time since reboot, in a unit such that
-   different requests arrive at different times.  Servers MAY
-   intermittently reset the timer and MAY generate a random offset
-   applied to all timestamps.  When resetting the timer, the server MUST
-   reject all Echo values that were created before the reset.
+   timer at reboot and use the time since reboot, choosing the
+   granularity such that different requests arrive at different times.
+   Servers MAY intermittently reset the timer and MAY generate a random
+   offset applied to all timestamps.  When resetting the timer, the
+   server MUST reject all Echo values that were created before the
+   reset.
 
    Servers that use the List of Cached Random Values and Timestamps
    method described in Appendix A may be vulnerable to resource
@@ -1142,8 +1143,8 @@ Table of Contents
 
    Tokens that cannot be reused need to be handled appropriately.  This
    could be solved by increasing the Token as soon as the currently used
-   Token cannot be reused, or by keeping a list of all deny-listed
-   Tokens.
+   Token cannot be reused, or by keeping a list of all Tokens unsuitable
+   for reuse.
 
    When the Token (or part of the Token) contains a sequence number, the
    encoding of the sequence number has to be chosen in a way to avoid
